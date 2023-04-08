@@ -1,4 +1,4 @@
-package org.example.util;
+package org.example.jdbc.util;
 
 import lombok.experimental.UtilityClass;
 

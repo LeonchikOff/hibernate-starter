@@ -1,4 +1,4 @@
-package org.example.util;
+package org.example.jdbc.util;
 
 import lombok.experimental.UtilityClass;
 
@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-
-import static org.example.util.JDBCPropertiesLoader.*;
 
 @UtilityClass
 public class ConnectionPoolManager {
@@ -33,17 +31,17 @@ public class ConnectionPoolManager {
 
     private static void loadDriver() {
         try {
-            Class.forName(getProperty(PROP_JDBC_DRIVER));
+            Class.forName(JDBCPropertiesLoader.getProperty(PROP_JDBC_DRIVER));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
     private static void initConnectionPool() {
-        String propertyPoolSize = getProperty(PROP_POLL_SIZE_CUSTOM);
+        String propertyPoolSize = JDBCPropertiesLoader.getProperty(PROP_POLL_SIZE_CUSTOM);
         int connectionsPoolSize =
                 (propertyPoolSize == null)
-                ? Integer.parseInt(getProperty(PROP_POLL_SIZE_DEFAULT))
+                ? Integer.parseInt(JDBCPropertiesLoader.getProperty(PROP_POLL_SIZE_DEFAULT))
                 : Integer.parseInt(propertyPoolSize);
         proxyConnectionPool = new ArrayBlockingQueue<>(connectionsPoolSize);
         realConnections = new ArrayList<>(connectionsPoolSize);
@@ -51,7 +49,9 @@ public class ConnectionPoolManager {
             Connection connection = openConnection();
             realConnections.add(connection);
             Connection proxyConnection =
-                    (Connection) Proxy.newProxyInstance(ConnectionPoolManager.class.getClassLoader(), new Class[]{Connection.class},
+                    (Connection) Proxy.newProxyInstance(
+                            ConnectionPoolManager.class.getClassLoader(),
+                            new Class[]{Connection.class},
                             (proxy, method, args) -> method.getName().equals("close")
                                     ? proxyConnectionPool.add((Connection) proxy) : method.invoke(connection, args));
             proxyConnectionPool.add(proxyConnection);
@@ -61,9 +61,9 @@ public class ConnectionPoolManager {
     private static Connection openConnection() {
         try {
             return DriverManager.getConnection(
-                    getProperty(PROP_URL),
-                    getProperty(PROP_USER),
-                    getProperty(PROP_PASSWORD)
+                    JDBCPropertiesLoader.getProperty(PROP_URL),
+                    JDBCPropertiesLoader.getProperty(PROP_USER),
+                    JDBCPropertiesLoader.getProperty(PROP_PASSWORD)
             );
         } catch (SQLException sqlException) {
             throw new RuntimeException(sqlException);
