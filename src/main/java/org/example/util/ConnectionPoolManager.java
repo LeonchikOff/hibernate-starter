@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+import static org.example.util.JDBCPropertiesLoader.*;
+
 @UtilityClass
 public class ConnectionPoolManager {
     private static final String PROP_JDBC_DRIVER = "db.driver";
@@ -31,17 +33,17 @@ public class ConnectionPoolManager {
 
     private static void loadDriver() {
         try {
-            Class.forName(JDBCPropertiesLoader.getProperty(PROP_JDBC_DRIVER));
+            Class.forName(getProperty(PROP_JDBC_DRIVER));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
     private static void initConnectionPool() {
-        String propertyPoolSize = JDBCPropertiesLoader.getProperty(PROP_POLL_SIZE_CUSTOM);
+        String propertyPoolSize = getProperty(PROP_POLL_SIZE_CUSTOM);
         int connectionsPoolSize =
                 (propertyPoolSize == null)
-                ? Integer.parseInt(PROP_POLL_SIZE_DEFAULT)
+                ? Integer.parseInt(getProperty(PROP_POLL_SIZE_DEFAULT))
                 : Integer.parseInt(propertyPoolSize);
         proxyConnectionPool = new ArrayBlockingQueue<>(connectionsPoolSize);
         realConnections = new ArrayList<>(connectionsPoolSize);
@@ -59,9 +61,9 @@ public class ConnectionPoolManager {
     private static Connection openConnection() {
         try {
             return DriverManager.getConnection(
-                    JDBCPropertiesLoader.getProperty(PROP_URL),
-                    JDBCPropertiesLoader.getProperty(PROP_USER),
-                    JDBCPropertiesLoader.getProperty(PROP_PASSWORD)
+                    getProperty(PROP_URL),
+                    getProperty(PROP_USER),
+                    getProperty(PROP_PASSWORD)
             );
         } catch (SQLException sqlException) {
             throw new RuntimeException(sqlException);
