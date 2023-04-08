@@ -10,13 +10,14 @@ repositories {
     mavenCentral()
 }
 
-sourceCompatibility = 14
-targetCompatibility = 14
-
-tasks.withType(JavaCompile) {
-    options.compilerArgs.add('--enable-preview')
+java {
+    sourceCompatibility = JavaVersion.VERSION_14
+    targetCompatibility = JavaVersion.VERSION_14
 }
 
+tasks.withType(JavaExec) {
+    jvmArgs.add('--enable-preview')
+}
 tasks.withType(Test) {
     jvmArgs.add("--enable-preview")
 }
