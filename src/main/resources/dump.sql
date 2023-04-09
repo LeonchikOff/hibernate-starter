@@ -2,9 +2,9 @@ DROP TABLE IF EXISTS users;
 
 CREATE TABLE users
 (
-    userName  varchar(128) primary key,
-    firstName varchar(128),
-    lastName  varchar(128),
-    birthDay  date,
+    user_name  varchar(128) primary key,
+    first_name varchar(128),
+    last_name  varchar(128),
+    birth_date  date,
     age       int
 );

@@ -6,7 +6,6 @@ group 'org.example'
 version '1.0-SNAPSHOT'
 
 repositories {
-    mavenLocal()
     mavenCentral()
 }
 
@@ -14,19 +13,22 @@ java {
     sourceCompatibility = JavaVersion.VERSION_14
     targetCompatibility = JavaVersion.VERSION_14
 }
+//tasks.withType(JavaCompile) {
+//    options.compilerArgs.add('--enable-preview')
+//}
+//tasks.withType(JavaExec) {
+//    jvmArgs += ['--enable-preview', '-Dfile.encoding=UTF-8', '-Dconsole.encoding=UTF-8']
+//}
+//test {
+//    jvmArgs(['--enable-preview'])
+//}
 
-tasks.withType(JavaExec) {
-    jvmArgs.add('--enable-preview')
-}
-tasks.withType(Test) {
-    jvmArgs.add("--enable-preview")
-}
 
 dependencies {
 // JDBC Implementation Driver
     runtimeOnly group: 'org.postgresql', name: 'postgresql', version: '42.6.0'
 // ORM
-    implementation group: 'org.hibernate.orm', name: 'hibernate-core', version: '6.1.7.Final'
+    implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.5.6.Final'
 
 // Template code
     compileOnly 'org.projectlombok:lombok:1.18.26'
