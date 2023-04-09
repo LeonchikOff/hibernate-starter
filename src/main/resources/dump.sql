@@ -8,3 +8,5 @@ CREATE TABLE users
     birth_date  date,
     age       int
 );
+
+alter table users add role varchar(32);

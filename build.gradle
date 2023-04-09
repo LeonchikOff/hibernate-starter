@@ -16,9 +16,9 @@ java {
 //tasks.withType(JavaCompile) {
 //    options.compilerArgs.add('--enable-preview')
 //}
-//tasks.withType(JavaExec) {
-//    jvmArgs += ['--enable-preview', '-Dfile.encoding=UTF-8', '-Dconsole.encoding=UTF-8']
-//}
+tasks.withType(JavaExec) {
+    jvmArgs += ['--enable-preview', '-Dfile.encoding=UTF-8', '-Dconsole.encoding=UTF-8']
+}
 //test {
 //    jvmArgs(['--enable-preview'])
 //}
