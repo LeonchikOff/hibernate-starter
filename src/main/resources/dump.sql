@@ -10,4 +10,5 @@ CREATE TABLE users
 );
 
 alter table users add role varchar(32);
+alter table users add info jsonb;
 alter table users drop column age;

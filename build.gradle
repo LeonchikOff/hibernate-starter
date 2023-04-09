@@ -26,9 +26,12 @@ tasks.withType(JavaExec) {
 
 dependencies {
 // JDBC Implementation Driver
-    runtimeOnly group: 'org.postgresql', name: 'postgresql', version: '42.6.0'
+    runtimeOnly 'org.postgresql:postgresql:42.6.0'
 // ORM
-    implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.5.6.Final'
+    // https://mvnrepository.com/artifact/org.hibernate/hibernate-core
+    implementation 'org.hibernate:hibernate-core:5.5.6.Final'
+
+    implementation 'com.vladmihalcea:hibernate-types-52:2.12.1'
 
 // Template code
     compileOnly 'org.projectlombok:lombok:1.18.26'
@@ -36,6 +39,8 @@ dependencies {
 
     testCompileOnly 'org.projectlombok:lombok:1.18.26'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
+// Logging
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.0'
 // Testing
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.9.2'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.9.2'

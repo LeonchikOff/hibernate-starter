@@ -1,4 +1,4 @@
-package org.example.orm.converter;
+package org.example.entity.orm.converter;
 
 import org.example.entity.BirthDate;
 
