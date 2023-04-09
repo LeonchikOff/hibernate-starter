@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.entity.BirthDate;
 import org.example.entity.Role;
 import org.example.entity.User;
 import org.example.jdbc.util.ConnectionManager;
@@ -29,8 +30,7 @@ class HibernateRunnerTest {
                 .userName("someUserName@gmail.com")
                 .firstName("SomeFirstName")
                 .lastName("SomeLastName")
-                .birthDate(LocalDate.of(1997, 2, 4))
-                .age(26)
+                .birthDate(new BirthDate(LocalDate.of(1997, 2, 4)))
                 .role(Role.USER)
                 .build();
         insertQuery(user);

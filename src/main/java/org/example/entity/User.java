@@ -1,13 +1,12 @@
 package org.example.entity;
 
-import javax.persistence.*;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.orm.converter.BirthDateConverter;
 
-import java.time.LocalDate;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "users", schema = "public")
@@ -17,15 +16,15 @@ import java.time.LocalDate;
 @Builder
 public class User {
     @Id
-        @Column(name = "user_name")
+    @Column(name = "user_name")
     private String userName;
-        @Column(name = "first_name")
+    @Column(name = "first_name")
     private String firstName;
-        @Column(name = "last_name")
+    @Column(name = "last_name")
     private String lastName;
-        @Column(name = "birth_date")
-    private LocalDate birthDate;
-    private Integer age;
+    @Column(name = "birth_date")
+    @Convert(converter = BirthDateConverter.class)
+    private BirthDate birthDate;
     @Enumerated(EnumType.STRING)
     private Role role;
 }
