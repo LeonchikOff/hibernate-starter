@@ -1,7 +1,5 @@
 package org.example;
 
-import org.example.entity.BirthDate;
-import org.example.entity.Role;
 import org.example.entity.User;
 import org.example.jdbc.util.ConnectionManager;
 import org.junit.jupiter.api.Disabled;
@@ -14,7 +12,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -71,14 +68,14 @@ class HibernateRunnerTest {
     @Test
     @Disabled
     void checkInsertReflectionApi() {
-        User user = User.builder()
-                .userName("someUserName@gmail.com")
-                .firstName("SomeFirstName")
-                .lastName("SomeLastName")
-                .birthDate(new BirthDate(LocalDate.of(1997, 2, 4)))
-                .role(Role.USER)
-                .build();
-        insertQuery(user);
+//        User user = User.builder()
+//                .userName("someUserName@gmail.com")
+//                .firstName("SomeFirstName")
+//                .lastName("SomeLastName")
+//                .birthDate(new BirthDate(LocalDate.of(1997, 2, 4)))
+//                .role(Role.USER)
+//                .build();
+//        insertQuery(user);
     }
 
     private <T> void insertQuery(T entity) {

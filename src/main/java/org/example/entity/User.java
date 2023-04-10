@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.entity.orm.converter.BirthDateConverter;
 import org.example.entity.orm.type.MyCustomJsonBinaryType;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -24,10 +23,9 @@ import javax.persistence.*;
 public class User {
     @Id
     private String userName;
-    private String firstName;
-    private String lastName;
-    @Convert(converter = BirthDateConverter.class)
-    private BirthDate birthDate;
+    @Embedded
+    @AttributeOverride(name = "birthDate", column = @Column(name = "birth_date"))
+    private UserPersonalInfo personalInfo;
     @Enumerated(EnumType.STRING)
     private Role role;
     @Type(type = "myJsonB")

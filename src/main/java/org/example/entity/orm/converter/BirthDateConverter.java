@@ -23,7 +23,7 @@ public class BirthDateConverter implements AttributeConverter<BirthDate, Date> {
     public BirthDate convertToEntityAttribute(Date dbData) {
         return Optional.ofNullable(dbData)
                 .map(Date::toLocalDate)
-                .map(BirthDate::new)
+                .map(BirthDate::of)
                 .orElse(null);
     }
 }

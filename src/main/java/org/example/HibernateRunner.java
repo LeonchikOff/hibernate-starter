@@ -1,11 +1,15 @@
 package org.example;
 
 import lombok.extern.slf4j.Slf4j;
+import org.example.entity.BirthDate;
 import org.example.entity.User;
+import org.example.entity.UserPersonalInfo;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.orm.util.HibernateUtil;
+
+import java.time.LocalDate;
 
 @Slf4j
 public class HibernateRunner {
@@ -13,9 +17,12 @@ public class HibernateRunner {
 
 //      The entity status is TRANSIENT(переходный) for whatever session
         User user = User.builder()
-                .userName("someUserName@gmile.com")
-                .firstName("someFirstName")
-                .lastName("someLastName")
+                .userName("anotherUserName@gmile.com")
+                .personalInfo(UserPersonalInfo.builder()
+                        .firstName("anotherFirstName")
+                        .lastName("anotherLastName")
+                        .birthDate(BirthDate.of(LocalDate.of(1993, 6, 20)))
+                        .build())
                 .build();
         log.info("User entity status is TRANSIENT for whatever session: {}", user);
 
