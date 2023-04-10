@@ -5,8 +5,11 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.orm.util.HibernateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HibernateRunner {
+    private static final Logger LOGGER = LoggerFactory.getLogger(HibernateRunner.class);
     public static void main(String[] args) {
 
 //      The entity status is TRANSIENT(переходный) for whatever session
@@ -15,26 +18,22 @@ public class HibernateRunner {
                 .firstName("someFirstName")
                 .lastName("someLastName")
                 .build();
+        LOGGER.info("User entity status is TRANSIENT for whatever session: {}", user);
 
         try (SessionFactory sessionFactory = HibernateUtil.buildSessionFactory()) {
-            try (Session session1 = sessionFactory.openSession()) {
-                Transaction transaction1 = session1.beginTransaction();
+            Session session = sessionFactory.openSession();
+            try (session) {
+                Transaction transaction1 = session.beginTransaction();
+                LOGGER.info("Transaction is created: {}", transaction1);
 //      The entity status is PERSISTENT(стабильный) for the current session
-                session1.saveOrUpdate(user);
+                session.saveOrUpdate(user);
+                LOGGER.info("User entity: {} has PERSISTENT status for session: {}", user, session);
                 transaction1.commit();
             }
-            try (Session session3 = sessionFactory.openSession()) {
-                Transaction transaction2 = session3.beginTransaction();
-                session3.refresh(user);
-                transaction2.commit();
-            }
-
-            try (Session session2 = sessionFactory.openSession()) {
-                Transaction transaction2 = session2.beginTransaction();
-//      The entity status is REMOVED(удалённый) for the current session
-                session2.delete(user);
-                transaction2.commit();
-            }
+            LOGGER.warn("User entity has DETACHED status for closed session: {}", session);
+        } catch (Exception e) {
+            LOGGER.error("Exception occurred", e);
+            throw e;
         }
 
     }

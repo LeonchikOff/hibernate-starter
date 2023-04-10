@@ -28,19 +28,18 @@ dependencies {
 // JDBC Implementation Driver
     runtimeOnly 'org.postgresql:postgresql:42.6.0'
 // ORM
-    // https://mvnrepository.com/artifact/org.hibernate/hibernate-core
     implementation 'org.hibernate:hibernate-core:5.5.6.Final'
-
     implementation 'com.vladmihalcea:hibernate-types-52:2.12.1'
 
 // Template code
-    compileOnly 'org.projectlombok:lombok:1.18.26'
+    compileOnly         'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
 
-    testCompileOnly 'org.projectlombok:lombok:1.18.26'
+    testCompileOnly         'org.projectlombok:lombok:1.18.26'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
 // Logging
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.0'
+    implementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.32'
+
 // Testing
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.9.2'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.9.2'
