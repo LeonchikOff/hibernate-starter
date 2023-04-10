@@ -9,6 +9,7 @@ import java.util.Optional;
 
 @Converter(autoApply = true)
 public class BirthDateConverter implements AttributeConverter<BirthDate, Date> {
+    public static final BirthDateConverter INSTANCE = new BirthDateConverter();
 
     @Override
     public Date convertToDatabaseColumn(BirthDate attribute) {

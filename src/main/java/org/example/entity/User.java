@@ -23,13 +23,9 @@ import javax.persistence.*;
 @Builder
 public class User {
     @Id
-    @Column(name = "user_name")
     private String userName;
-    @Column(name = "first_name")
     private String firstName;
-    @Column(name = "last_name")
     private String lastName;
-    @Column(name = "birth_date")
     @Convert(converter = BirthDateConverter.class)
     private BirthDate birthDate;
     @Enumerated(EnumType.STRING)
