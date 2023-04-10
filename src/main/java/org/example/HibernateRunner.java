@@ -1,6 +1,5 @@
 package org.example;
 
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import org.example.entity.BirthDate;
 import org.example.entity.Role;
 import org.example.entity.User;
@@ -26,7 +25,7 @@ public class HibernateRunner {
             session.beginTransaction();
 
             User user = User.builder()
-                    .userName("leonchik@gmail.com")
+                    .userName("leonchik12@gmail.com")
                     .firstName("Leon")
                     .lastName("Chik")
                     .birthDate(new BirthDate(LocalDate.of(2003, 2, 4)))
@@ -34,8 +33,8 @@ public class HibernateRunner {
                     .info("{\"username\" : \"Leon\", " +
                           "\"id\" : \"leon@gmail.com\"}")
                     .build();
-            session.persist(user);
-
+//            session.delete(user);
+            session.get(User.class, "leon@gmail.com");
             session.getTransaction().commit();
         }
     }

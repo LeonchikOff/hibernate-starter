@@ -7,13 +7,12 @@ import org.example.jdbc.util.ConnectionManager;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -24,8 +23,54 @@ class HibernateRunnerTest {
 
 
     @Test
+    @Disabled("non-working mapping, illustrating the general idea of the Hibernate's Session method get(class, id)")
+    void checkSelectReflectionApi() {
+        User user = selectQuery(User.class, "someUserName@gmail.com");
+
+    }
+    @SuppressWarnings("SameParameterValue")
+    private <T> T selectQuery(Class<T> entityType, String id) {
+        String dmlSelectSqlQuery = "select * from %s where %s = ?";
+        String tableName = Optional.ofNullable(entityType.getAnnotation(Table.class))
+                .map(tableAnnotation -> tableAnnotation.schema() + "." + tableAnnotation.name())
+                .orElse(entityType.getName());
+        Field[] declaredFields = entityType.getDeclaredFields();
+        String columnNameId = null;
+        for (Field declaredField : declaredFields) {
+            if (declaredField.getAnnotation(Id.class) != null) {
+                columnNameId = Optional.ofNullable(declaredField.getAnnotation(Column.class))
+                        .map(Column::name).orElse(declaredField.getName());
+            }
+        }
+        dmlSelectSqlQuery = dmlSelectSqlQuery.formatted(tableName, columnNameId);
+        try (Connection connection = ConnectionManager.openConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(dmlSelectSqlQuery)) {
+           preparedStatement.setObject(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            try {
+                T instance = entityType.getConstructor().newInstance();
+                populateEntity(entityType, declaredFields, resultSet, instance);
+            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+        }
+        return null;
+    }
+
+    private <T> void populateEntity(Class<T> entityType, Field[] declaredFields, ResultSet resultSet, T instance) throws IllegalAccessException, SQLException {
+        Field[] declaredFields1 = entityType.getDeclaredFields();
+        for (int i = 0; i < declaredFields.length; i++) {
+            Field field = declaredFields1[i];
+            field.setAccessible(true);
+            field.set(instance, resultSet.getObject(1));
+        }
+    }
+
+    @Test
     @Disabled
-    void checkReflectionApi() {
+    void checkInsertReflectionApi() {
         User user = User.builder()
                 .userName("someUserName@gmail.com")
                 .firstName("SomeFirstName")
