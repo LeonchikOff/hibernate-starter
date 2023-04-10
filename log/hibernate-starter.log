@@ -1,0 +1,8 @@
+INFO: [14:50:23,849] [CLASS: org.example.HibernateRunner, LINE: 21]
+******[MESSAGE: User entity status is TRANSIENT for whatever session: User(userName=someUserName@gmile.com, firstName=someFirstName, lastName=someLastName, birthDate=null, role=null, info=null)]******
+INFO: [14:50:25,594] [CLASS: org.example.HibernateRunner, LINE: 27]
+******[MESSAGE: Transaction is created: org.hibernate.engine.transaction.internal.TransactionImpl@60a19573]******
+INFO: [14:50:25,619] [CLASS: org.example.HibernateRunner, LINE: 30]
+******[MESSAGE: User entity: User(userName=someUserName@gmile.com, firstName=someFirstName, lastName=someLastName, birthDate=null, role=null, info=null) has PERSISTENT status for session: SessionImpl(520043771<open>)]******
+WARN: [14:50:25,619] [CLASS: org.example.HibernateRunner, LINE: 33]
+******[MESSAGE: User entity has DETACHED status for closed session: SessionImpl(520043771<closed>)]******

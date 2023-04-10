@@ -8,6 +8,28 @@
                    value="%p: [%d{HH:mm:ss,SSS}] [CLASS: %c, LINE: %L]%n******[MESSAGE: %m]******%n"/>
         </layout>
     </appender>
+    
+    <appender name="file" class="org.apache.log4j.RollingFileAppender">
+        <param name="file" value="log/hibernate-starter.log"/>
+        
+        <param name="append" value="false"/>
+        <param name="maxFileSize" value="1MB"/>
+        <param name="maxBackupIndex" value="10"/>
+        
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="conversionPattern"
+                   value="%p: [%d{HH:mm:ss,SSS}] [CLASS: %c, LINE: %L]%n******[MESSAGE: %m]******%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="ALL"/>
+        </filter>
+    </appender>
+
+    <logger name="org.example">
+        <level value="info"/>
+        <appender-ref ref="file"/>
+    </logger>
+
     <root>
         <level value="info"/>
         <appender-ref ref="console"/>
