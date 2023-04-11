@@ -13,13 +13,13 @@ import java.time.LocalDate;
 public class HibernateRunner {
     public static void main(String[] args) {
         Company companyGoogle = Company.builder()
-                .name("Google")
+                .name("Amazon")
                 .build();
         User user = User.builder()
-                .userName("anotherUserName@gmile.com")
+                .userName("userName@gmile.com")
                 .personalInfo(UserPersonalInfo.builder()
-                        .firstName("anotherFirstName")
-                        .lastName("anotherLastName")
+                        .firstName("firstName")
+                        .lastName("lastName")
                         .birthDate(BirthDate.of(LocalDate.of(1993, 6, 20)))
                         .build())
                 .role(Role.ADMIN)
@@ -32,11 +32,8 @@ public class HibernateRunner {
             try (session) {
                 Transaction transaction = session.beginTransaction();
 
-//                session.save(companyGoogle);
-//                session.save(user);
-
-                userFromDb = session.get(User.class, 1L);
-                System.out.println(userFromDb.getCompany());
+                session.save(companyGoogle);
+                session.save(user);
                 transaction.commit();
             }
         }

@@ -1,23 +1,26 @@
 package org.example.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.entity.orm.type.MyCustomJsonBinaryType;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
-@Entity
-@Table(name = "users", schema = "public")
-@TypeDef(name = "myJsonB", typeClass = MyCustomJsonBinaryType.class)
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@EqualsAndHashCode(of = "userName")
+@ToString(exclude = {"company", "profile", "chats"})
+
+
+@Entity
+@Table(name = "users", schema = "public")
+@TypeDef(name = "myJsonB", typeClass = MyCustomJsonBinaryType.class)
 public class User {
 
     @Id
@@ -37,8 +40,24 @@ public class User {
     @Type(type = "myJsonB")
     private String info;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private Company company;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
+    private Profile profile;
+
+    @Builder.Default
+    @ManyToMany
+    @JoinTable(
+            name = "users_chat",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "chat_id"))
+    private Set<Chat> chats = new HashSet<>();
+
+    public void addChat(Chat chat) {
+        chats.add(chat);
+        chat.getUsers().add(this);
+    }
 
 }

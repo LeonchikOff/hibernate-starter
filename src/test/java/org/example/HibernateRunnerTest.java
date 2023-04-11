@@ -1,9 +1,13 @@
 package org.example;
 
-import org.example.entity.User;
+import lombok.Cleanup;
+import org.example.entity.*;
 import org.example.jdbc.util.ConnectionManager;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.orm.util.HibernateUtil;
 
 import javax.persistence.*;
 import java.lang.reflect.Field;
@@ -12,11 +16,123 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 class HibernateRunnerTest {
+
+    @Test
+    void checkOneToOne() {
+        try (SessionFactory sessionFactory = HibernateUtil.buildSessionFactory();
+             Session session = sessionFactory.openSession()){
+            session.beginTransaction();
+            User user = User.builder()
+                    .userName("someUserName@gmail.com")
+                    .personalInfo(UserPersonalInfo.builder()
+                            .firstName("firstName")
+                            .lastName("lastName")
+                            .birthDate(BirthDate.of(LocalDate.of(1993, 6, 20)))
+                            .build())
+                    .role(Role.ADMIN)
+                    .build();
+            Profile profile = Profile.builder()
+                    .language("En")
+                    .street("Bad 13")
+                    .build();
+            profile.setUser(user);
+            session.save(user);
+
+
+            session.getTransaction().commit();
+        }
+    }
+
+    @Test
+    @Disabled
+    void checkOrphanRemoval() {
+        try (SessionFactory sessionFactory = HibernateUtil.buildSessionFactory();
+             Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            Company company = session.get(Company.class, 1);
+            Set<User> users = company.getUsers();
+            users.removeIf(user -> user.getId().equals(6L));
+
+            session.getTransaction().commit();
+        }
+    }
+
+    @Test
+    @Disabled("LazyException")
+    void checkLazyInitialisation() {
+        Company company = null;
+        try (SessionFactory sessionFactory = HibernateUtil.buildSessionFactory()) {
+            try (Session session = sessionFactory.openSession()) {
+                session.beginTransaction();
+
+                company = session.get(Company.class, 1);
+
+
+                session.getTransaction().commit();
+            }
+        }
+        System.out.println(company.getUsers().size());
+    }
+
+
+    @Test
+    @Disabled
+    void deleteCompany() {
+        try (SessionFactory sessionFactory = HibernateUtil.buildSessionFactory()) {
+            try (Session session = sessionFactory.openSession()) {
+                session.beginTransaction();
+                Company company = session.get(Company.class, 6);
+                session.delete(company);
+                session.getTransaction().commit();
+            }
+        }
+    }
+
+    @Disabled
+    @Test
+    void addUserToNewCompany() {
+        @Cleanup
+        SessionFactory sessionFactory = HibernateUtil.buildSessionFactory();
+        @Cleanup Session session = sessionFactory.openSession();
+        session.beginTransaction();
+        Company facebook = Company.builder()
+                .name("Facebook")
+                .build();
+        User user = User.builder()
+                .userName("someUserName@gmail.com")
+                .personalInfo(UserPersonalInfo.builder()
+                        .firstName("firstName")
+                        .lastName("lastName")
+                        .birthDate(BirthDate.of(LocalDate.of(1993, 6, 20)))
+                        .build())
+                .role(Role.ADMIN)
+                .build();
+        facebook.addUser(user);
+        session.save(facebook);
+        session.getTransaction().commit();
+    }
+
+    @Disabled
+    @Test
+    void companyAssociationOneToMany() {
+        @Cleanup
+        SessionFactory sessionFactory = HibernateUtil.buildSessionFactory();
+        @Cleanup
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        Company company = session.get(Company.class, 1);
+        System.out.println("");
+        session.getTransaction().commit();
+
+    }
 
 
     @Test
@@ -25,6 +141,7 @@ class HibernateRunnerTest {
         User user = selectQuery(User.class, "someUserName@gmail.com");
 
     }
+
     @SuppressWarnings("SameParameterValue")
     private <T> T selectQuery(Class<T> entityType, String id) {
         String dmlSelectSqlQuery = "select * from %s where %s = ?";
@@ -39,10 +156,10 @@ class HibernateRunnerTest {
                         .map(Column::name).orElse(declaredField.getName());
             }
         }
-        dmlSelectSqlQuery = dmlSelectSqlQuery.formatted(tableName, columnNameId);
+        dmlSelectSqlQuery = String.format(dmlSelectSqlQuery, tableName, columnNameId);
         try (Connection connection = ConnectionManager.openConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(dmlSelectSqlQuery)) {
-           preparedStatement.setObject(1, id);
+            preparedStatement.setObject(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             try {
                 T instance = entityType.getConstructor().newInstance();
