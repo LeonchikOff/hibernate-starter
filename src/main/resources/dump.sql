@@ -1,27 +1,26 @@
 drop table if exists users;
 drop table if exists all_sequences_table;
 drop sequence if exists users_id_seq;
+drop sequence if exists company_id_seq;
+
+
+create table company
+(
+    id   serial primary key,
+    name varchar(64) unique
+);
 
 create table users
 (
---     id bigserial primary key,
-    first_name varchar(128) not null,
-    last_name  varchar(128) not null,
-    birth_date date not null,
+    id         bigserial primary key,
     user_name  varchar(128) unique,
-    role varchar(32),
-    info jsonb,
-    primary key (first_name, last_name, birth_date)
+    first_name varchar(128),
+    last_name  varchar(128),
+    birth_date date not null,
+    role       varchar(32),
+    info       jsonb,
+    company_id int references company (id)
 );
-
--- create table all_sequences_table
--- (
---     table_name varchar(32) primary key,
---     pk_value   bigint not null
--- );
---
--- create sequence if not exists users_id_seq
---     owned by public.users.id;
 
 
 

@@ -15,7 +15,7 @@
     <property name="format_sql">true</property>
 
     <mapping class="org.example.entity.User"/>
-
+    <mapping class="org.example.entity.Company"/>
     <!-- DB schema will be updated if needed -->
     <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->
   </session-factory>
