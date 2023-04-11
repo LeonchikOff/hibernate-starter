@@ -17,12 +17,12 @@ public class HibernateRunner {
 
 //      The entity status is TRANSIENT(переходный) for whatever session
         User user = User.builder()
-                .userName("anotherUserName@gmile.com")
                 .personalInfo(UserPersonalInfo.builder()
                         .firstName("anotherFirstName")
                         .lastName("anotherLastName")
                         .birthDate(BirthDate.of(LocalDate.of(1993, 6, 20)))
                         .build())
+                .userName("anotherUserName@gmile.com")
                 .build();
         log.info("User entity status is TRANSIENT for whatever session: {}", user);
 
@@ -37,6 +37,16 @@ public class HibernateRunner {
                 transaction1.commit();
             }
             log.warn("User entity has DETACHED status for closed session: {}", session);
+            try (Session openedSession = sessionFactory.openSession()) {
+                UserPersonalInfo key = UserPersonalInfo.builder()
+                        .firstName("anotherFirstName")
+                        .lastName("anotherLastName")
+                        .birthDate(BirthDate.of(LocalDate.of(1993, 6, 20)))
+                        .build();
+                User dbUser = openedSession.get(User.class, key);
+                System.out.println(dbUser);
+
+            }
         } catch (Exception e) {
             log.error("Exception occurred", e);
             throw e;
